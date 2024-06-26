@@ -172,135 +172,141 @@ class _CompaniesPageState extends State<CompaniesPage> {
                         ),
                         Expanded(
                           child: GridView.builder(
-                              scrollDirection: Axis.vertical,
-                              itemCount: state.suppliers.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: crossAxisCount,
-                                mainAxisSpacing: mainAxisSpacing,
-                                crossAxisSpacing: crossAxisSpacing,
-                                mainAxisExtent: 250,
-                              ),
-                              itemBuilder: (context, index) {
-                                var supplier = state.suppliers[index];
+                            scrollDirection: Axis.vertical,
+                            itemCount: state.suppliers.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: crossAxisCount,
+                              mainAxisSpacing: mainAxisSpacing,
+                              crossAxisSpacing: crossAxisSpacing,
+                              mainAxisExtent:
+                                  300, // زيادة ارتفاع العنصر لضمان ملائمة المحتوى
+                            ),
+                            itemBuilder: (context, index) {
+                              var supplier = state.suppliers[index];
 
-                                return InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CategoriesPageFS(
-                                                    id: supplier.id,
-                                                    supplier: supplier,
-                                                    type: widget.type,
-                                                  )));
-                                    },
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CategoriesPageFS(
+                                        id: supplier.id,
+                                        supplier: supplier,
+                                        type: widget.type,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: SizedBox(
+                                  width: 150,
+                                  height: 400,
+                                  child: Card(
+                                    borderOnForeground: true,
+                                    color: Colors.white,
+                                    elevation: 1,
                                     child: Padding(
-                                      padding: const EdgeInsets.all(0),
-                                      child: SizedBox(
-                                        width: 130,
-                                        height: 300,
-                                        child: Card(
-                                          borderOnForeground: true,
-                                          color: Colors.white,
-                                          elevation: 1,
-                                          child: Padding(
+                                      padding: const EdgeInsets.only(right: 5),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
                                             padding:
-                                                const EdgeInsets.only(right: 5),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                const EdgeInsets.only(top: 0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 5),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      CircleAvatar(
-                                                        backgroundColor:
-                                                            const Color
-                                                                .fromARGB(255,
-                                                                132, 80, 2),
-                                                        radius: 35,
-                                                        backgroundImage:
-                                                            NetworkImage(
-                                                                supplier.image,
-                                                                scale: 1.0),
-                                                        onBackgroundImageError:
-                                                            (exception,
-                                                                stackTrace) {}, // استبدل offer.imageUrl بالمتغير الذي يحتوي على عنوان URL للصورة
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 90,
-                                                      height: 30,
-                                                      child: FittedBox(
-                                                        fit: BoxFit.contain,
-                                                        child: Text(
-                                                          supplier.storeName,
-                                                          style: const TextStyle(
-                                                              fontSize: 20,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 3),
-                                                  child: Text(supplier.location,
-                                                      style: Styles.textStyle18(
-                                                          context)),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 3),
-                                                  child: Text(
-                                                      '${supplier.deliveryDuration}',
-                                                      style: Styles.textStyle18(
-                                                          context)),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 3),
-                                                  child: Text(
-                                                      'الحد الأدنى: ${supplier.minBillPrice}',
-                                                      style: Styles.textStyle18(
-                                                          context)),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 3),
-                                                  child: Text(
-                                                      'اقل عدد منتجات:${supplier.minSellingQuantity}',
-                                                      style: Styles.textStyle18(
-                                                          context)),
+                                                CircleAvatar(
+                                                  backgroundColor:
+                                                      const Color.fromARGB(
+                                                          255, 132, 80, 2),
+                                                  radius: 35,
+                                                  backgroundImage: NetworkImage(
+                                                      supplier.image,
+                                                      scale: 1.0),
+                                                  onBackgroundImageError:
+                                                      (exception,
+                                                          stackTrace) {},
                                                 ),
                                               ],
                                             ),
                                           ),
-                                        ),
+                                          Expanded(
+                                            child: Center(
+                                              child: FittedBox(
+                                                fit: BoxFit.contain,
+                                                child: Text(
+                                                  supplier.storeName,
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.only(top: 3),
+                                              child: Text(
+                                                supplier.location,
+                                                style:
+                                                    Styles.textStyle18(context),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.only(top: 3),
+                                              child: Text(
+                                                '${supplier.deliveryDuration}',
+                                                style:
+                                                    Styles.textStyle18(context),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.only(top: 3),
+                                              child: Text(
+                                                'الحد الأدنى: ${supplier.minBillPrice}',
+                                                style:
+                                                    Styles.textStyle18(context),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.only(top: 3),
+                                              child: Text(
+                                                'اقل عدد منتجات:${supplier.minSellingQuantity}',
+                                                style:
+                                                    Styles.textStyle18(context),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ));
-                              }),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ],
                     );

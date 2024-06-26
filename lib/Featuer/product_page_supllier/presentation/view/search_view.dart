@@ -7,44 +7,50 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductSearch {
-  final num productId;
+  final num id;
   final num productCategoryId;
   final String description;
   final String name;
-  final num size;
-  final String sizeOf;
+  final String storeName;
   final num supplierId;
   final num price;
+  final num offerPrice;
+  final num hasOffer;
   final num maxSellingQuantity;
-  final List<dynamic> image;
+  final num minSellingQuantity;
+  final List<String> image;
   final String productCategory;
 
   ProductSearch({
-    required this.productId,
+    required this.id,
     required this.productCategoryId,
     required this.description,
     required this.name,
-    required this.size,
-    required this.sizeOf,
+    required this.storeName,
     required this.supplierId,
     required this.price,
+    required this.hasOffer,
+    required this.offerPrice,
     required this.maxSellingQuantity,
-    this.image = const [],
+    required this.minSellingQuantity,
+    required this.image,
     required this.productCategory,
   });
 
   factory ProductSearch.fromJson(Map<String, dynamic> json) {
     return ProductSearch(
-      productId: json['product_id'],
+      id: json['id'],
       productCategoryId: json['product_category_id'],
       description: json['discription'],
       name: json['name'],
-      size: json['size'],
-      sizeOf: json['size_of'],
+      storeName: json['store_name'],
       supplierId: json['supplier_id'],
       price: json['price'],
+      hasOffer: json['has_offer'],
+      offerPrice: json['offer_price'],
       maxSellingQuantity: json['max_selling_quantity'],
-      image: json['image'],
+      minSellingQuantity: json['min_selling_quantity'],
+      image: List<String>.from(json['image']),
       productCategory: json['product_category'],
     );
   }
@@ -93,6 +99,7 @@ class ProductSearchCubit extends Cubit<ProductStateSearch> {
           },
         ),
       );
+      print(response.data);
       final data = response.data['products'];
       final products = List<ProductSearch>.from(
         data['data'].map((x) => ProductSearch.fromJson(x)),
@@ -113,7 +120,9 @@ class ProductSearchCubit extends Cubit<ProductStateSearch> {
 }
 
 // استبدل هذا بمسار ملف ProductCubit الخاص بك
-
+//////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///
 class ProductSearchDelegate22 extends SearchDelegate<void> {
   ProductSearchDelegate22();
 
@@ -184,9 +193,9 @@ class ProductSearchDelegate22 extends SearchDelegate<void> {
             return ListView.builder(
               itemCount: state.products.length,
               itemBuilder: (context, index) {
-                // var image = state.products[index].image.first;
+                var image = state.products[index].image.first;
                 return ProductCardSearch(
-                  // image: image,
+                  image: image,
                   product: state.products[index],
                 );
               },
@@ -232,9 +241,9 @@ class ProductSearchDelegate22 extends SearchDelegate<void> {
             return ListView.builder(
               itemCount: state.products.length,
               itemBuilder: (context, index) {
-                // var image = state.products[index].image.first;
+                var image = state.products[index].image.first;
                 return ProductCardSearch(
-                  // image: image,
+                  image: image,
                   product: state.products[index],
                 );
               },
@@ -253,11 +262,11 @@ class ProductSearchDelegate22 extends SearchDelegate<void> {
 
 class ProductCardSearch extends StatelessWidget {
   final ProductSearch product;
-  // final dynamic image;
+  final dynamic image;
   const ProductCardSearch({
     super.key,
     required this.product,
-    // required this.image,
+    required this.image,
   });
 
   @override
@@ -269,7 +278,7 @@ class ProductCardSearch extends StatelessWidget {
     final double verticalPadding = screenSize.height * 0.02;
     final double spacing = screenSize.height * 0.01;
     final double titleSize = isTablet ? 24 : 18;
-    final double bodySize = isTablet ? 20 : 16;
+    final double bodySize = isTablet ? 18 : 14;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -279,30 +288,34 @@ class ProductCardSearch extends StatelessWidget {
           color: Colors.white,
           child: Row(
             children: [
-              SizedBox(
-                width: screenSize.width * 0.20,
-                child: const Icon(
-                  Icons.image,
-                  size: 50,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: screenSize.width * 0.24,
+                  height: screenSize.height * 0.20,
+                  // child: const Icon(
+                  //   Icons.image,
+                  //   size: 50,
+                  // ),بيسي
+
+                  child: image != null
+                      ? Image.network(
+                          image,
+                          fit: BoxFit
+                              .contain, // يحافظ على نسب الأبعاد ويملأ المساحة المتاحة
+                        )
+                      : Container(
+                          color: Colors.grey[300], // لون خلفية البديل
+                          child: Icon(
+                            Icons.image, // أيقونة بديلة
+                            color: Colors.grey[700], // لون الأيقونة
+                            size: 50, // حجم الأيقونة
+                          ),
+                        ),
                 ),
-                // حوالي 20% من عرض الشاشة
-                // child: AspectRatio(
-                //   aspectRatio: 1, // النسبة المربعة
-                //   child: image != null
-                //       ? Image.network(
-                //           image,
-                //           fit: BoxFit
-                //               .cover, // يحافظ على نسب الأبعاد ويملأ المساحة المتاحة
-                //         )
-                //       : Container(
-                //           color: Colors.grey[300], // لون خلفية البديل
-                //           child: Icon(
-                //             Icons.image, // أيقونة بديلة
-                //             color: Colors.grey[700], // لون الأيقونة
-                //             size: 50, // حجم الأيقونة
-                //           ),
-                //         ),
-                // ),
+              ),
+              const SizedBox(
+                width: 8,
               ),
               Expanded(
                 child: Padding(
@@ -310,47 +323,58 @@ class ProductCardSearch extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            product.sizeOf,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: titleSize,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Text(
-                            product.name,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: titleSize,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        product.name,
+                        style: Styles.textStyle24(context),
+                        // softWrap: true,
+                        overflow: TextOverflow.visible,
                       ),
+                      Text("اسم المتجر :${product.storeName}",
+                          style: Styles.textStyle24(context)),
+                      const SizedBox(width: 16),
                       SizedBox(height: spacing),
                       Text(
                         product.description,
-                        style: TextStyle(
-                          fontSize: bodySize,
-                        ),
+                        style: Styles.textStyle20(context)
+                            .copyWith(fontWeight: FontWeight.bold),
+                        // softWrap: true,
+                        overflow: TextOverflow.visible,
                       ),
                       SizedBox(height: spacing),
                       Text(
                         product.productCategory,
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: bodySize,
-                        ),
+                        style: Styles.textStyle20(context),
+                        // softWrap: true,
+                        overflow: TextOverflow.visible,
                       ),
-                      Text(
-                        '${product.price}ج',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: bodySize,
+                      if (product.offerPrice > 0) ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Flexible(
+                              child: Text("ج${product.price}",
+                                  style: Styles.textStyle20(context).copyWith(
+                                    decoration: TextDecoration.lineThrough,
+                                  )),
+                            ),
+                            Flexible(
+                              child: Text(" ${product.offerPrice}ج",
+                                  style: Styles.textStyle20(context)
+                                      .copyWith(color: Colors.green)),
+                            ),
+                            Text(
+                                textAlign: TextAlign.left,
+                                " عرض خاص",
+                                style: Styles.textStyle20(context)
+                                    .copyWith(color: Colors.red)),
+                          ],
                         ),
-                      ),
+                      ] else ...[
+                        Text(
+                          "${product.price}ج",
+                          style: Styles.textStyle20(context),
+                        ),
+                      ],
                     ],
                   ),
                 ),

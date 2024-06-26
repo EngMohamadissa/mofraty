@@ -67,6 +67,8 @@ class UserCubitCubit extends Cubit<UserCubitState> {
     //   return response;
     // }
     try {
+      final prefs = await SharedPreferences.getInstance();
+
       final data = {
         'first_name': signUpfirstname.text,
         'middle_name': signUpmidllename.text,
@@ -80,6 +82,7 @@ class UserCubitCubit extends Cubit<UserCubitState> {
         if (signUpAria.text.isNotEmpty) 'location_details': signUpAria.text,
         if (signUprepresentatorcode.text.isNotEmpty)
           'representator_code': signUprepresentatorcode.text,
+        'deviceToken': prefs.getString('divicetoken'),
       };
 
       final response = await Dio().post(

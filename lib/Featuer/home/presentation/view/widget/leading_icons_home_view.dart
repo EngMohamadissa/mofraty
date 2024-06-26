@@ -63,7 +63,7 @@ class AppBarHomeView extends StatelessWidget {
         const Spacer(),
         Center(
           child: Text(
-            "موفرتي",
+            "موفراتي",
             style: Styles.textStyle24(context).copyWith(
                 fontWeight: FontWeight.bold, color: kPrimaryColorwhit),
           ),

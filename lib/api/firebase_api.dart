@@ -58,6 +58,7 @@
 
 import 'package:eghyptproject/core/utils/app_router.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseApi {
   final _firbaseMassagin = FirebaseMessaging.instance;
@@ -66,6 +67,8 @@ class FirebaseApi {
     await _firbaseMassagin.requestPermission();
 
     final fCMToken = await _firbaseMassagin.getToken();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('divicetoken', fCMToken!);
 
     print('Token:$fCMToken');
 

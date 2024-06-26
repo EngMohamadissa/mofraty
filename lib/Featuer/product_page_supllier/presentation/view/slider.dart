@@ -184,65 +184,66 @@ class MyHomePagemoveState extends State<MySliderPagemove> {
             return buildLoadingIndicator();
           } else if (state is OffersSliderLoaded && state.offers.isNotEmpty) {
             _offerLength = state.offers.length; // تحديث طول القائمة
-            return PageView.builder(
-              controller: _pageController,
-              itemCount: _offerLength,
-              itemBuilder: (context, index) {
-                return AnimatedBuilder(
-                  animation: _pageController,
-                  builder: (context, child) {
-                    // تأثيرات تحريك للانتقال بين الصور
-                    double value = 1.0;
-                    if (_pageController.position.haveDimensions) {
-                      value = _pageController.page! - index;
-                      value = (1 - (value.abs() * .5))
-                          .clamp(0.0, 1.0); // تغيير القيمة لتأثير أكثر نعومة
-                    }
-                    return Center(
-                      child: SizedBox(
-                        // تعديل الأبعاد لجعل الصورة والحاوية أكبر
-                        height: Curves.easeOut.transform(value) *
-                            MediaQuery.of(context).size.height,
-                        width: Curves.easeOut.transform(value) *
-                            MediaQuery.of(context).size.width,
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: Stack(
-                    children: [
-                      Container(
-                        // إزالة الهوامش
-                        margin: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(20), // حدود منحنية
-                          image: DecorationImage(
-                            image: NetworkImage(state.offers[index].image),
-                            fit: BoxFit.cover, // لتغطية الحاوية بالكامل
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black45,
-                              blurRadius: 20,
-                              offset: Offset(0, 12),
-                            ),
-                          ],
+            return AspectRatio(
+              aspectRatio: 7 / 4,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: _offerLength,
+                itemBuilder: (context, index) {
+                  return AnimatedBuilder(
+                    animation: _pageController,
+                    builder: (context, child) {
+                      // تأثيرات تحريك للانتقال بين الصور
+                      double value = 1.0;
+                      if (_pageController.position.haveDimensions) {
+                        value = _pageController.page! - index;
+                        value = (1 - (value.abs() * .5))
+                            .clamp(0.0, 1.0); // تغيير القيمة لتأثير أكثر نعومة
+                      }
+                      return Center(
+                        child: SizedBox(
+                          // تعديل الأبعاد لجعل الصورة والحاوية أكبر
+                          height: Curves.easeOut.transform(value) *
+                              MediaQuery.of(context).size.height,
+                          width: Curves.easeOut.transform(value) *
+                              MediaQuery.of(context).size.width,
+                          child: child,
                         ),
-                      ),
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        Container(
+                          // إزالة الهوامش
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(20), // حدود منحنية
+                            image: DecorationImage(
+                              image: NetworkImage(state.offers[index].image),
+                              fit: BoxFit.cover, // لتغطية الحاوية بالكامل
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black45,
+                                blurRadius: 20,
+                                offset: Offset(0, 12),
+                              ),
+                            ],
+                          ),
+                        ),
 
-                      // يمكن إضافة المزيد من العناصر هنا إذا لزم الأمر
-                    ],
-                  ),
-                );
-              },
+                        // يمكن إضافة المزيد من العناصر هنا إذا لزم الأمر
+                      ],
+                    ),
+                  );
+                },
+              ),
             );
           } else if (state is OffersSliderError) {
             return Center(child: Text(state.message));
           }
-          return Container(
-            height: 0,
-          ); // حالة البداية أو حالات أخرى
+          return Container(); // حالة البداية أو حالات أخرى
         },
       ),
     );
