@@ -62,16 +62,15 @@ class ProductsListState extends State<ProductsList> {
   @override
   void initState() {
     super.initState();
-    sliderCubit = OffersSliderCubit();
-    productCubitSupllier = ProductCubitSupllier(ApiProvider());
+    // sliderCubit = OffersSliderCubit();
+    // productCubitSupllier = ProductCubitSupllier(ApiProvider());
     // final prefs = await SharedPreferences.getInstance();
     // prefs.getDouble('total');
   }
 
   @override
   void dispose() {
-    sliderCubit.close();
-    productCubitSupllier.close();
+    // sliderCubit.close();
 
     super.dispose();
   }
@@ -188,9 +187,9 @@ class ProductsListState extends State<ProductsList> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      MySliderPagemove(
-                        id: state.supplier!.id,
-                      ),
+                      // MySliderPagemove(
+                      //   id: state.supplier!.id,
+                      // ),
                       BlocProvider(
                         create: (context) => ProductCubitSupllier(ApiProvider())
                           ..fetchProductWithOffer(
@@ -252,31 +251,31 @@ class ProductsListState extends State<ProductsList> {
                                               color: Colors.white,
                                               child: Column(
                                                 children: <Widget>[
-                                                  SizedBox(
-                                                      height: MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              600
-                                                          ? 110
-                                                          : 150,
-                                                      width: MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              600
-                                                          ? 90
-                                                          : 85,
-                                                      child: state
-                                                                  .products[
-                                                                      bindex]
-                                                                  .images
-                                                                  ?.first !=
-                                                              null
-                                                          ? Image.network(state
-                                                              .products[bindex]
-                                                              .images!
-                                                              .first!)
-                                                          : const Icon(
-                                                              Icons.image_not_supported_outlined)),
+                                                  // SizedBox(
+                                                  //     height: MediaQuery.of(context)
+                                                  //                 .size
+                                                  //                 .width <
+                                                  //             600
+                                                  //         ? 110
+                                                  //         : 150,
+                                                  //     width: MediaQuery.of(context)
+                                                  //                 .size
+                                                  //                 .width <
+                                                  //             600
+                                                  //         ? 90
+                                                  //         : 85,
+                                                  //     child: state
+                                                  //                 .products[
+                                                  //                     bindex]
+                                                  //                 .images
+                                                  //                 ?.first !=
+                                                  //             null
+                                                  //         ? Image.network(state
+                                                  //             .products[bindex]
+                                                  //             .images!
+                                                  //             .first!)
+                                                  //         : const Icon(
+                                                  //             Icons.image_not_supported_outlined)),
                                                   Text(
                                                     '${product.name}',
                                                     style: Styles.textStyle24(
@@ -524,16 +523,16 @@ class ProductsListState extends State<ProductsList> {
                                 padding: EdgeInsets.all(paddingAllSides),
                                 child: Row(
                                   children: [
-                                    SizedBox(
-                                      height: 150,
-                                      width: 130,
-                                      child: image != null
-                                          ? Image.network(
-                                              product.images!.first!,
-                                            )
-                                          : const Icon(Icons
-                                              .image_not_supported_outlined),
-                                    ),
+                                    // SizedBox(
+                                    //   height: 150,
+                                    //   width: 130,
+                                    //   child: image != null
+                                    //       ? Image.network(
+                                    //           product.images!.first!,
+                                    //         )
+                                    //       : const Icon(Icons
+                                    //           .image_not_supported_outlined),
+                                    // ),
                                     SizedBox(
                                         width: getResponsiveSizedBoxWidth(10)),
                                     Expanded(
