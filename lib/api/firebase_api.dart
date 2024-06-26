@@ -66,6 +66,7 @@ class FirebaseApi {
     await _firbaseMassagin.requestPermission();
 
     final fCMToken = await _firbaseMassagin.getToken();
+
     print('Token:$fCMToken');
 
     intitPushNotification();
