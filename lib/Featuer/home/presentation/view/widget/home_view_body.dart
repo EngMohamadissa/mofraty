@@ -2,11 +2,12 @@ import 'package:eghyptproject/Featuer/Companies/presentation/view/companies_page
 import 'package:eghyptproject/Featuer/home/presentation/manger/cubit/home_cubit.dart';
 import 'package:eghyptproject/Featuer/home/presentation/view/widget/column_circle_avatar_item.dart';
 import 'package:eghyptproject/Featuer/home/presentation/view/widget/move_photo.dart';
+import 'package:eghyptproject/core/utils/app_router.dart';
 import 'package:eghyptproject/core/utils/funcations/show_snack_bar.dart';
 import 'package:eghyptproject/core/widget/custom_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../../core/styles.dart';
 
 class HomeViewBody extends StatefulWidget {
@@ -35,30 +36,31 @@ class _HomeViewBodyState extends State<HomeViewBody> {
       child: BlocConsumer<HomeCubit, SupplierState>(
         listener: (context, state) {
           if (state is SupplierError) {
+            if (state.message == '.الرجاء تسجيل الدخول أولا') {
+              GoRouter.of(context).push(AppRouter.kloginView);
+            }
             showCustomSnackBar(context, state.message, color: Colors.red);
+          } else if (state is SupplierErrortoken) {
+            GoRouter.of(context).push(AppRouter.kloginView);
           }
         },
         builder: (context, state) {
           if (state is SupplierLoading) {
             return buildLoadingIndicator();
-          } else if (state is SupplierLoaded) {
+          } else if (state is SupplierLoaded &&
+              state.supplierCategories.isNotEmpty) {
             final sortedCategories = state.supplierCategories
               ..sort((a, b) => a.id.compareTo(b.id));
             return ListView(
               children: [
-                const AspectRatio(
-                  aspectRatio: 7 / 4,
-                  child: SizedBox(
-                    // margin: const EdgeInsets.symmetric(vertical: 6.0),
-                    // height: MediaQuery.of(context).size.width < 600
-                    //     ? 230
-                    //     : 200, // Adjust height based on screen width
-                    // width: MediaQuery.of(context).size.width < 600
-                    //     ? 200
-                    //     : 250, // Adjust width based on screen width
-                    child: MyHomePagemove(),
-                  ),
-                ),
+                // margin: const EdgeInsets.symmetric(vertical: 6.0),
+                // height: MediaQuery.of(context).size.width < 600
+                //     ? 230
+                //     : 200, // Adjust height based on screen width
+                // width: MediaQuery.of(context).size.width < 600
+                //     ? 200
+                //     : 250, // Adjust width based on screen width
+                const MyHomePagemove(),
 
                 SizedBox(
                     height: MediaQuery.of(context).size.width < 600

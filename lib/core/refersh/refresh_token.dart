@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:eghyptproject/core/refersh/token_storage.dart';
 import 'package:eghyptproject/core/utils/app_router.dart';
 
-abstract class DioClient {
+abstract class DioClientr {
   String? entity;
   String baseUrl = 'https://backend.almowafraty.com/api/v1/';
   final Dio dio = Dio(
@@ -15,7 +15,7 @@ abstract class DioClient {
   late Response response;
   final TokenStorage tokenStorage = TokenStorage();
 
-  DioClient() {
+  DioClientr() {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {

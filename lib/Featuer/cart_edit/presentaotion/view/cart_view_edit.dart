@@ -226,10 +226,16 @@ class _CartEditViewState extends State<CartEditView> {
         automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: Colors.red,
-        title: const Text('سلة الطلبات'),
+        title: Text(
+          'سلة الطلبات',
+          style: Styles.textStyle20(context).copyWith(color: Colors.white),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete_outline),
+            icon: const Icon(
+              Icons.delete_outline,
+              color: Colors.white,
+            ),
             onPressed: () {
               // استدعاء الدالة لإظهار التحذير
               showCustomAlertDialog(
@@ -325,7 +331,7 @@ class _CartEditViewState extends State<CartEditView> {
                   Expanded(
                     child: ListView(
                       children: [
-                        if (widget.bill.products!.isEmpty) ...[
+                        if (widget.bill.products!.isNotEmpty) ...[
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
@@ -449,7 +455,7 @@ class _CartEditViewState extends State<CartEditView> {
                       ],
                     ))
                   ],
-                  if (widget.bill.products!.isEmpty) ...[
+                  if (widget.bill.products!.isNotEmpty) ...[
                     CheckoutSummaryEdit(
                       total: widget.bill.totalPrice,
                       chosenPaymentMethod: _chosenPaymentMethod,
@@ -539,7 +545,7 @@ class _CartEditViewState extends State<CartEditView> {
                                             foregroundColor: Colors.white,
                                             backgroundColor: Colors.green,
                                             minimumSize:
-                                                const Size(double.infinity, 60),
+                                                const Size(double.infinity, 80),
                                             elevation: 10,
                                             shape:
                                                 const RoundedRectangleBorder(),
@@ -549,7 +555,7 @@ class _CartEditViewState extends State<CartEditView> {
                                             Navigator.pop(context);
                                           },
                                           child: const Text(
-                                            'تأكيد الطلب',
+                                            'تعديل الطلب',
                                             style: TextStyle(fontSize: 20),
                                           ),
                                         ),

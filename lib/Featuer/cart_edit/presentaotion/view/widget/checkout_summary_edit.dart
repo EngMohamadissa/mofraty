@@ -11,19 +11,19 @@ class CheckoutSummaryEdit extends StatelessWidget {
   final VoidCallback onOrderNow; // الدالة التي ستُستدعى عند النقر على زر الطلب
 
   const CheckoutSummaryEdit({
-    Key? key,
+    super.key,
     required this.total,
     required this.chosenPaymentMethod,
     required this.onPaymentMethodChanged,
     required this.onCouponTap,
     required this.onOrderNow,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    double buttonHeight = screenWidth > 600 ? 40 : 30;
+    double buttonHeight = screenWidth > 600 ? 60 : 50;
     double paddingValue = screenWidth > 600 ? 16.0 : 8.0;
     return Column(
       children: [
@@ -78,7 +78,7 @@ class CheckoutSummaryEdit extends StatelessWidget {
             ),
             onPressed: onOrderNow,
             child: const Text(
-              'اطلب الآن',
+              'تعديل الآن',
               style: TextStyle(fontSize: 20), // يمكنك تخصيص النص كما تريد
             ),
           ),

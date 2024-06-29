@@ -192,10 +192,32 @@ class UserCubitCubit extends Cubit<UserCubitState> {
   //   (failure) => emit(LogoutFailure(errorMessage: failure.getFirstErrorMessage())),
   //   (user) => emit(LogoutSuccess(message: 'تم تسجيل الخروج بنجاح')),
   // );
-  Future<void> logout() async {
+  logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs
+        .getString('access_token'); // Retrieve token from shared preferences
+
+    if (token == null) {
+      emit(LogoutFailure(errorMessage: 'Authentication token not found'));
+      return;
+    }
+
+    // Dio().options.headers['Authorization'] = 'Bearer $token';
+
     emit(LogoutLoading());
     try {
-      final response = await Dio().get(EndPoint.logOut);
+      final response = await Dio().get(
+        'https://backend.almowafraty.com/api/v1/markets/auth/logout',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      // Remove the token from SharedPreferences after successful logout
+      await prefs.remove('access_token');
+
       emit(LogoutSuccess(message: response.data['message']));
       return response.data;
     } on DioException catch (e) {
@@ -213,7 +235,7 @@ class UserCubitCubit extends Cubit<UserCubitState> {
       final response = await Dio().post(
         'https://backend.almowafraty.com/api/v1/markets/auth/forget-password',
         data: {
-          'phone_number': forgetPhon.text,
+          'phone': forgetPhon.text,
           'name': forgetfirstname.text,
         },
       );

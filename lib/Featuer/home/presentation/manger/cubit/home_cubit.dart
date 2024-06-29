@@ -2,9 +2,13 @@
 
 import 'package:dio/dio.dart';
 import 'package:eghyptproject/Featuer/Auth/cubit/user_cubit_cubit.dart';
+import 'package:eghyptproject/Featuer/Auth/login/presentation/view/login_view.dart';
 import 'package:eghyptproject/Featuer/home/data/home_model.dart';
+import 'package:eghyptproject/core/utils/app_router.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meta/meta.dart';
 
 part 'home_state.dart';
@@ -13,6 +17,7 @@ class HomeCubit extends Cubit<SupplierState> {
   HomeCubit() : super(SupplierInitial());
   void loadSuppliers(String token) async {
     emit(SupplierLoading());
+
     try {
       // إنشاء instance من Dio
       final dio = Dio();
@@ -21,6 +26,11 @@ class HomeCubit extends Cubit<SupplierState> {
       // استخدم Dio لجلب البيانات من الـ API
       final response = await dio
           .get('https://backend.almowafraty.com/api/v1/markets/starting-page');
+
+      if (response.statusCode == 401) {
+        emit(SupplierErrortoken());
+      }
+
       final data = response.data;
       final supplierCategories = (data['supplier_categories'] as List)
           .map((e) => HomeModel.fromJson(e))

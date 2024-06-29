@@ -1,8 +1,12 @@
+import 'package:eghyptproject/Featuer/Auth/cubit/user_cubit_cubit.dart';
 import 'package:eghyptproject/constant.dart';
+import 'package:eghyptproject/core/utils/app_router.dart';
 import 'package:eghyptproject/core/utils/funcations/show_snack_bar.dart';
 import 'package:eghyptproject/core/widget/custom_loading.dart';
+import 'package:eghyptproject/logout_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../core/utils/funcations/validat_funcation.dart';
 import '../../../../../core/widget/custom_text_field.dart';
@@ -52,6 +56,7 @@ class _MyDataViewBodyState extends State<MyDataViewBody> {
         if (state is UpdateNameSuccess) {
           BlocProvider.of<MydataCubit>(context).getMarket();
           setState(() {});
+
           showCustomSnackBar(context, state.message, color: Colors.green);
         }
       },
@@ -87,7 +92,7 @@ class _MyDataViewBodyState extends State<MyDataViewBody> {
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   isDense: false,
                   label: const Text(' الاسم الاول'),
-                  validator: checkValidate,
+                  // validator: checkValidate,
                   hintText: state.market.firstName,
                   labelStyle: TextStyle(
                     color: Colors.blue[300],
@@ -102,7 +107,7 @@ class _MyDataViewBodyState extends State<MyDataViewBody> {
                   readOnly: !_isEditable,
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   isDense: false,
-                  validator: checkValidate,
+                  //validator: checkValidate,
                   label: const Text(' الاسم الوسط'),
                   hintText: state.market.middleName,
                   labelStyle: TextStyle(
@@ -118,7 +123,7 @@ class _MyDataViewBodyState extends State<MyDataViewBody> {
                   readOnly: !_isEditable,
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   isDense: false,
-                  validator: checkValidate,
+                  //  validator: checkValidate,
                   label: const Text(' الاسم الاخير'),
                   hintText: state.market.lastName,
                   labelStyle: TextStyle(
@@ -250,7 +255,7 @@ class _MyDataViewBodyState extends State<MyDataViewBody> {
                           _middleNameController.text,
                           _lastNameController.text,
                         );
-                        // BlocProvider.of<MydataCubit>(context).getMarket();
+                        BlocProvider.of<MydataCubit>(context).getMarket();
                         // setState(() {});
 
                         // بعد حفظ البيانات، قم بتغيير النص إلى "تعديل البيانيات" وتعيين الحالة إلى غير قابلة للتحرير
@@ -274,12 +279,48 @@ class _MyDataViewBodyState extends State<MyDataViewBody> {
                 ),
 
                 ElevatedBottonData(
-                  onLongPress: () {},
+                  onLongPress: () {
+                    GoRouter.of(context).push(AppRouter.kForgetView);
+                  },
                   data: 'تغيير الرقم السري',
                   backgroundColor: Colors.yellow,
                 ),
                 ElevatedBottonData(
-                    onLongPress: () {},
+                    onLongPress: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext dialogContext) {
+                          return AlertDialog(
+                            title: const Text('تأكيد تسجيل الخروج',
+                                style: TextStyle(color: Colors.red)),
+                            content: const Text(
+                                'هل أنت متأكد أنك تريد تسجيل الخروج؟',
+                                style: TextStyle(color: Colors.black)),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('إلغاء',
+                                    style: TextStyle(color: Colors.red)),
+                                onPressed: () {
+                                  Navigator.of(dialogContext)
+                                      .pop(); // Dismiss the dialog
+                                },
+                              ),
+                              TextButton(
+                                child: const Text('تسجيل الخروج',
+                                    style: TextStyle(color: Colors.red)),
+                                onPressed: () {
+                                  // Call the logout method here
+                                  BlocProvider.of<UserCubitCubit>(context)
+                                      .logout();
+                                  Navigator.of(dialogContext)
+                                      .pop(); // Dismiss the dialog
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
                     data: 'تسجيل الخروج',
                     backgroundColor: kPrimaryColorred)
               ],

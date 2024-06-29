@@ -7,6 +7,8 @@ abstract class SupplierState extends Equatable {
 
 class SupplierInitial extends SupplierState {}
 
+class SupplierErrortoken extends SupplierState {}
+
 class SupplierLoading extends SupplierState {}
 
 class SupplierLoaded extends SupplierState {

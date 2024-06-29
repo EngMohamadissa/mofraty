@@ -135,6 +135,8 @@ class CartItemEdit extends StatelessWidget {
                 image,
                 height: imageHeight,
                 width: imageWidth,
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.image_not_supported_outlined),
               ),
               Expanded(
                 child: ListTile(
@@ -157,14 +159,14 @@ class CartItemEdit extends StatelessWidget {
                           children: [
                             Flexible(
                               child: Text(
-                                "ج${pivot!.pivot!.price}",
+                                "${pivot!.pivot!.price}ج",
                                 style: Styles.textStyle18(context),
                               ),
                             ),
                             SizedBox(width: spaceBetweenItems),
                             Flexible(
                               child: Text(
-                                "ج${pivot!.pivot!.offerPrice}",
+                                "${pivot!.pivot!.offerPrice}ج",
                                 style: Styles.textStyle18(context)
                                     .copyWith(color: Colors.green),
                               ),
@@ -180,7 +182,7 @@ class CartItemEdit extends StatelessWidget {
                         ),
                       ] else ...[
                         Text(
-                          "ج${pivot!.pivot!.price}",
+                          "${pivot!.pivot!.price}ج",
                           style: Styles.textStyle18(context),
                         ),
                       ],

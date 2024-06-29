@@ -4,6 +4,7 @@ import 'package:eghyptproject/core/styles.dart';
 import 'package:eghyptproject/core/widget/custom_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductSearch {
@@ -182,11 +183,17 @@ class ProductSearchDelegate22 extends SearchDelegate<void> {
             if (state.products.isEmpty) {
               return Center(
                   child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     'لا توجد منتجات بهذا الاسم الرجاء التأكد',
-                    style: Styles.textStyle24(context),
+                    style:
+                        Styles.textStyle24(context).copyWith(color: Colors.red),
                   ),
+                  SvgPicture.asset(
+                      width: 150,
+                      height: 150,
+                      'assets/images/No data-pana (2).svg'),
                 ],
               ));
             }
@@ -291,28 +298,19 @@ class ProductCardSearch extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
-                  width: screenSize.width * 0.24,
-                  height: screenSize.height * 0.20,
-                  // child: const Icon(
-                  //   Icons.image,
-                  //   size: 50,
-                  // ),بيسي
+                    width: screenSize.width * 0.24,
+                    height: screenSize.height * 0.20,
+                    // child: const Icon(
+                    //   Icons.image,
+                    //   size: 50,
+                    // ),بيسي
 
-                  child: image != null
-                      ? Image.network(
-                          image,
-                          fit: BoxFit
-                              .contain, // يحافظ على نسب الأبعاد ويملأ المساحة المتاحة
-                        )
-                      : Container(
-                          color: Colors.grey[300], // لون خلفية البديل
-                          child: Icon(
-                            Icons.image, // أيقونة بديلة
-                            color: Colors.grey[700], // لون الأيقونة
-                            size: 50, // حجم الأيقونة
-                          ),
-                        ),
-                ),
+                    child: Image.network(
+                      image,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => const Icon(Icons
+                          .image_not_supported_outlined), // يحافظ على نسب الأبعاد ويملأ المساحة المتاحة
+                    )),
               ),
               const SizedBox(
                 width: 8,
@@ -329,7 +327,7 @@ class ProductCardSearch extends StatelessWidget {
                         // softWrap: true,
                         overflow: TextOverflow.visible,
                       ),
-                      Text("اسم المتجر :${product.storeName}",
+                      Text(":${product.storeName}",
                           style: Styles.textStyle24(context)),
                       const SizedBox(width: 16),
                       SizedBox(height: spacing),

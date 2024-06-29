@@ -11,6 +11,7 @@ import 'package:eghyptproject/api/gitit_storage.dart';
 import 'package:eghyptproject/core/api/dio_consumer.dart';
 import 'package:eghyptproject/core/cache/cache_helper.dart';
 import 'package:eghyptproject/firebase_options.dart';
+import 'package:eghyptproject/logout_test.dart';
 import 'package:eghyptproject/simple_bloc_observer_copy.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -22,11 +23,11 @@ import 'core/utils/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // initial();
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  // await FirebaseApi().initNotification();
+  initial();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await FirebaseApi().initNotification();
 
   /////u1
 

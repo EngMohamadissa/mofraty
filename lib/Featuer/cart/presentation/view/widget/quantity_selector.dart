@@ -1,3 +1,4 @@
+import 'package:eghyptproject/Featuer/cart/presentation/view/widget/cart.dart';
 import 'package:eghyptproject/core/styles.dart';
 import 'package:eghyptproject/core/utils/funcations/show_snack_bar.dart';
 import 'package:eghyptproject/core/utils/funcations/validat_funcation.dart';
@@ -63,8 +64,10 @@ class QuantitySelectorState extends State<QuantitySelector> {
                   ? () {
                       playSound(
                           'sounds/zapsplat_multimedia_button_click_001_68773.mp3');
+
                       setState(() {
                         quantity++;
+
                         _controller.text = quantity.toString();
                         if (widget.onChanged != null) {
                           widget.onChanged!(quantity);

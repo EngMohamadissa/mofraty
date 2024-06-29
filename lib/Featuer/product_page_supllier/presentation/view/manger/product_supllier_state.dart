@@ -1,3 +1,4 @@
+import 'package:eghyptproject/Featuer/home/presentation/view/widget/move_photo.dart';
 import 'package:eghyptproject/Featuer/product_page_supllier/data/product_model.dart';
 
 abstract class CategoryState {}
@@ -59,4 +60,20 @@ class WithOfferError extends ProductStateSupllier {
   final String errorMessage;
 
   WithOfferError(this.errorMessage);
+}
+
+class OffersSliderInitial extends ProductStateSupllier {}
+
+class OffersSliderLoading extends ProductStateSupllier {}
+
+class OffersSliderLoaded extends ProductStateSupllier {
+  final List<Offer> offers;
+
+  OffersSliderLoaded({required this.offers});
+}
+
+class OffersSliderError extends ProductStateSupllier {
+  final String message;
+
+  OffersSliderError({required this.message});
 }

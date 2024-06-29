@@ -11,7 +11,7 @@
 
 //   void getProducts(int supplierId) async {
 //     emit(ProductLoading());
-//     try {
+//      {
 //       final response = await dio.get(
 //         'https://almowafraty.com/api/v1/markets/suppliers/$supplierId',
 //         options: Options(

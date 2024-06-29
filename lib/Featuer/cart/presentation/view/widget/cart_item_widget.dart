@@ -121,12 +121,12 @@ class _CartItemState extends State<CartItem> {
                 color: Colors.white,
                 height: imageHeight,
                 width: imageWidth,
-                child: image != null
-                    ? Image.network(
-                        image,
-                        // fit: BoxFit.cover,
-                      )
-                    : const Icon(Icons.image_not_supported_outlined)),
+                child: Image.network(
+                  image,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.image_not_supported_outlined),
+                  // fit: BoxFit.cover,
+                )),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.all(paddingAllSides),
@@ -150,7 +150,7 @@ class _CartItemState extends State<CartItem> {
                         children: [
                           Flexible(
                             child: Text(
-                              "ج${widget.cartItem.price}",
+                              "${widget.cartItem.price}ج",
                               style: Styles.textStyle18(context),
                             ),
                           ),
@@ -172,7 +172,7 @@ class _CartItemState extends State<CartItem> {
                       ),
                     ] else ...[
                       Text(
-                        "ج${widget.cartItem.price}",
+                        "${widget.cartItem.price}ج",
                         style: Styles.textStyle18(context),
                       ),
                     ],

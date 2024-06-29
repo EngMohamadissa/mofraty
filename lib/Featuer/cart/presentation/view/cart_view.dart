@@ -1,20 +1,24 @@
 import 'dart:convert';
 
+import 'package:eghyptproject/Featuer/Companies/presentation/view/companies_page_view.dart';
 import 'package:eghyptproject/Featuer/cart/presentation/manger/new_bill_cubit.dart';
 import 'package:eghyptproject/Featuer/cart/presentation/manger/new_bill_state.dart';
 import 'package:eghyptproject/Featuer/cart/presentation/view/widget/cart.dart';
 import 'package:eghyptproject/Featuer/cart/presentation/view/widget/cart_item_widget.dart';
 import 'package:eghyptproject/Featuer/cart/presentation/view/widget/checkout_summary.dart';
+import 'package:eghyptproject/Featuer/home/presentation/view/home_view.dart';
 import 'package:eghyptproject/Featuer/product_page_supllier/data/product_model.dart';
+import 'package:eghyptproject/Featuer/product_page_supllier/presentation/view/product_list.dart';
 import 'package:eghyptproject/constant.dart';
 
 import 'package:eghyptproject/core/styles.dart';
+import 'package:eghyptproject/core/utils/app_router.dart';
 import 'package:eghyptproject/core/utils/funcations/show_snack_bar.dart';
 import 'package:eghyptproject/core/utils/funcations/validat_funcation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CartPage extends StatefulWidget {
@@ -47,11 +51,13 @@ class CartPageState extends State<CartPage> {
   double total = 0;
   int totalQuantity = 0;
   TextEditingController note = TextEditingController();
+  late Cart _cart;
 
   @override
   void initState() {
     super.initState();
     _calculateTotalAndQuantity();
+    _cart = Cart();
   }
 
   void _removeCartItem(Product product, String supplierName) {
@@ -59,6 +65,11 @@ class CartPageState extends State<CartPage> {
         cartItem.id == product.id && cartItem.supllierName == supplierName);
     if (index != -1) {
       setState(() {
+        _cart.isAddedToCartMap[product.productId] = false;
+        _cart.productQuantities[product.productId] = 1;
+        _cart.isAddedToCartMapH[product.productId] = false;
+        _cart.productQuantitiesH[product.productId] = 1;
+
         widget.cartItems.removeAt(index);
         _calculateTotalAndQuantity();
       });
@@ -118,9 +129,18 @@ class CartPageState extends State<CartPage> {
 
   void _clearCart() {
     setState(() {
+      _cart.isAddedToCartMap.clear();
+      _cart.productQuantities == 1;
+      _cart.isAddedToCartMapH.clear();
+      _cart.productQuantitiesH == 1;
+
       widget.cartItems.clear();
       _calculateTotalAndQuantity();
       clearSharedPreferences();
+
+      setState(() {
+        const HomeView();
+      });
     });
   }
 
@@ -164,7 +184,7 @@ class CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     Map<String, List<Product>> productsBySupplier = {};
-    for (var product in Cart().cartProducts) {
+    for (var product in _cart.cartProducts) {
       if (!productsBySupplier.containsKey(product.supllierName)) {
         productsBySupplier[product.supllierName] = [];
       }
@@ -176,13 +196,15 @@ class CartPageState extends State<CartPage> {
     var totalItems = widget.cartItems.length;
 
     var supplierProductsList =
-        Cart().getProductsBySupplier(widget.supplierNames!);
+        _cart.getProductsBySupplier(widget.supplierNames!);
     var transferProductsList =
-        Cart().transformSupplierProductsList(supplierProductsList, note.text);
+        _cart.transformSupplierProductsList(supplierProductsList, note.text);
 
     return BlocConsumer<BillCubit, BillState>(
       listener: (context, state) {
         if (state is BillSuccess) {
+          // _cart.calculateTotalAndQuantity == 0;
+
           _clearCart();
           playSound('sounds/Cash Purchase Sound Effects(MP3_128K).mp3');
         }
@@ -293,6 +315,39 @@ class CartPageState extends State<CartPage> {
                     ],
                   ),
                 ],
+                if (productsBySupplier.isEmpty) ...[
+                  Column(
+                    children: [
+                      const SizedBox(
+                        height: 100,
+                      ),
+                      SvgPicture.asset(
+                          width: 150,
+                          height: 150,
+                          'assets/images/No data-pana (2).svg'),
+                      Text(
+                        'سلة الطلبات فارغة',
+                        style: Styles.textStyle24(context)
+                            .copyWith(color: Colors.red),
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const CompaniesPage(
+                                        type: 'تاجر جملة',
+                                      )),
+                            );
+                          },
+                          child: const Text(
+                            'إضافة منتجات',
+                            style: TextStyle(
+                                color: Colors.red, fontWeight: FontWeight.bold),
+                          )),
+                    ],
+                  )
+                ],
                 Expanded(
                   child: ListView.builder(
                     itemCount: productsBySupplier.length,
@@ -302,7 +357,7 @@ class CartPageState extends State<CartPage> {
                       List<Product> supplierProducts =
                           productsBySupplier[supplierName]!;
 
-                      supplierInfo = Cart().suppliersInfo[supplierName]!;
+                      supplierInfo = _cart.suppliersInfo[supplierName]!;
 
                       double totalForSupplier =
                           _calculateTotalForSupplier(supplierProducts);
@@ -382,9 +437,16 @@ class CartPageState extends State<CartPage> {
                                         .copyWith(color: Colors.red),
                                   ),
                                   ResponsiveSizedBox.responsiveWidth(context),
+                                  const Icon(Icons.production_quantity_limits,
+                                      color: Colors.blue),
+                                  Text(
+                                    'عدد المنتجات :${supplierProducts.length}',
+                                    style: Styles.textStyle18(context),
+                                  ),
+                                  ResponsiveSizedBox.responsiveWidth(context),
                                   const Icon(Icons.store, color: Colors.green),
                                   Text(
-                                    'الحد الادنى للسعر: ${supplierInfo.minBillPrice}',
+                                    'الحد الادنى : ${supplierInfo.minBillPrice}',
                                     style: Styles.textStyle18(context),
                                   ),
                                   ResponsiveSizedBox.responsiveWidth(context),
@@ -396,13 +458,41 @@ class CartPageState extends State<CartPage> {
                                   ),
                                   Text(
                                     'الإجمالي لـ $supplierName: $totalForSupplier',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
+                                    style: Styles.textStyle18(context),
                                   ),
                                 ],
                               ),
                             ),
                           ),
+                          if (productsBySupplier.isEmpty) ...[
+                            Column(
+                              children: [
+                                Center(
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const CompaniesPage(
+                                                    type: 'تاجر جملة',
+                                                  )),
+                                        );
+                                      },
+                                      child: const Text('أضافة منتجات')),
+                                ),
+                                SvgPicture.asset(
+                                    width: 200,
+                                    height: 00,
+                                    'assets/images/No data-pana (2).svg'),
+                                Text(
+                                  'سلة الطلبات فارغة',
+                                  style: Styles.textStyle24(context)
+                                      .copyWith(color: Colors.red),
+                                ),
+                              ],
+                            )
+                          ],
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -501,22 +591,6 @@ class CartPageState extends State<CartPage> {
                     },
                   ),
                 ),
-                if (productsBySupplier.isEmpty) ...[
-                  Center(
-                      child: Column(
-                    children: [
-                      SvgPicture.asset(
-                          width: 400,
-                          height: 400,
-                          'assets/images/No data-pana (2).svg'),
-                      Text(
-                        'سلة الطلبات فارغة',
-                        style: Styles.textStyle24(context)
-                            .copyWith(color: Colors.red),
-                      )
-                    ],
-                  ))
-                ],
                 if (productsBySupplier.isNotEmpty) ...[
                   CheckoutSummary(
                     total: total,
@@ -597,10 +671,10 @@ class CartPageState extends State<CartPage> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 13),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 2),
+                                        horizontal: 8),
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         foregroundColor: Colors.white,

@@ -659,7 +659,7 @@ class _SpashViewState extends State<SpashView>
       } else {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const LoginView()),
+          MaterialPageRoute(builder: (context) => const HomeView()),
         );
       }
       // prefs.getString('access_token') == null

@@ -1,14 +1,18 @@
 class Offer {
   final int id;
   final int supplierId;
-  final String image;
+  final String? image;
 
-  Offer({required this.id, required this.supplierId, required this.image});
+  Offer({
+    required this.id,
+    required this.supplierId,
+    this.image,
+  });
 
   factory Offer.fromJson(Map<String, dynamic> json) {
     return Offer(
-      id: json['id'],
-      supplierId: json['supplier_id'],
+      id: json['id'] ?? 0,
+      supplierId: json['supplier_id'] ?? 0,
       image: json['image'],
     );
   }
@@ -49,20 +53,22 @@ class Supplier {
 
   factory Supplier.fromJson(Map<String, dynamic> json) {
     return Supplier(
-      id: json['id'],
-      supplierCategoryId: json['supplier_category_id'],
-      cityId: json['city_id'],
-      firstName: json['first_name'],
-      middleName: json['middle_name'],
-      lastName: json['last_name'],
-      storeName: json['store_name'],
-      phoneNumber: json['phone_number'],
-      minBillPrice: json['min_bill_price'].toDouble(),
-      minSellingQuantity: json['min_selling_quantity'],
+      id: json['id'] ?? 0,
+      supplierCategoryId: json['supplier_category_id'] ?? 0,
+      cityId: json['city_id'] ?? 0,
+      firstName: json['first_name'] ?? '',
+      middleName: json['middle_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      storeName: json['store_name'] ?? '',
+      phoneNumber: json['phone_number'] ?? '',
+      minBillPrice: (json['min_bill_price'] != null
+          ? json['min_bill_price'].toDouble()
+          : 0.0),
+      minSellingQuantity: json['min_selling_quantity'] ?? 0,
       deliveryDuration: json['delivery_duration'],
-      status: json['status'],
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
+      status: json['status'] ?? '',
+      createdAt: json['created_at'] ?? '',
+      updatedAt: json['updated_at'] ?? '',
     );
   }
 }

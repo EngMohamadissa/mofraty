@@ -14,8 +14,8 @@ import 'package:eghyptproject/core/widget/custom_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+// ignore: must_be_immutable
 class ProductsList extends StatefulWidget {
   final String type;
   final SupplierModel? supplier;
@@ -46,26 +46,28 @@ class ProductsList extends StatefulWidget {
 }
 
 class ProductsListState extends State<ProductsList> {
-  double totalCost = 0.0;
-
   double progressValue = 0.0;
   bool isAddedToCart = false;
+  bool isAddedToCart2 = false;
+
   // Map<int, bool> isAddedToCartMap = {};
-  List<bool> isAddedToCartList1 = [];
-  List<bool> isAddedToCartList2 = [];
+  late double totalCost;
 
-  Map<int, bool> isAddedToCartMap1 = {};
-  Map<int, bool> isAddedToCartMap2 = {};
+  late List<bool> isAddedToCartList1;
+  late List<bool> isAddedToCartListH;
 
-  late OffersSliderCubit sliderCubit;
-  late ProductCubitSupllier productCubitSupllier;
+  // List<bool> isAddedToCartList1 = [];
+  // List<bool> isAddedToCartList2 = [];
+
+  // Map<int, bool> isAddedMECartMap1 = {};
+  // Map<int, bool> isAddedMECartMap2 = {};
+
+  late Cart _cart;
   @override
   void initState() {
     super.initState();
-    // sliderCubit = OffersSliderCubit();
-    // productCubitSupllier = ProductCubitSupllier(ApiProvider());
-    // final prefs = await SharedPreferences.getInstance();
-    // prefs.getDouble('total');
+    _cart = Cart();
+    totalCost = 0.0;
   }
 
   @override
@@ -172,8 +174,17 @@ class ProductsListState extends State<ProductsList> {
       },
       builder: (context, state) {
         if (state is ProductsLoaded && state.categoryId == widget.categoryId) {
-          isAddedToCartList1 = List.filled(state.products.length, false);
-          isAddedToCartList2 = List.filled(state.products.length, false);
+          isAddedToCartListH = List<bool>.filled(state.products.length, false);
+          // calculateTotalForAddedProductsH(state.products, isAddedToCartListH);
+          // isAddedToCartList1 = List.filled(state.products.length, false);
+
+          isAddedToCartListH =
+              List<bool>.generate(state.products.length, (index) {
+            return _cart.isAddedToCartMapH[state.products[index].productId] ??
+                false;
+          });
+
+          // isAddedToCartList2 = List.filled(state.products.length, false);
 
           // List<bool> isAddedToCartlList =
           //     List.generate(state.products.length, (index) => false);
@@ -190,6 +201,8 @@ class ProductsListState extends State<ProductsList> {
                       // MySliderPagemove(
                       //   id: state.supplier!.id,
                       // ),
+
+                      // const MyHomePagemove(),
                       BlocProvider(
                         create: (context) => ProductCubitSupllier(ApiProvider())
                           ..fetchProductWithOffer(
@@ -205,25 +218,43 @@ class ProductsListState extends State<ProductsList> {
                           builder: (context, state) {
                             if (state is WithOfferSuccess &&
                                 state.products.isNotEmpty) {
+                              isAddedToCartList1 = List<bool>.generate(
+                                  state.products.length, (index) {
+                                return _cart.isAddedToCartMap[
+                                        state.products[index].productId] ??
+                                    false;
+                              });
+                              isAddedToCartList1 = List<bool>.filled(
+                                  state.products.length, false);
+
+                              // calculateTotalForAddedProducts(
+                              //     state.products, isAddedToCartList1);
                               progressValue = totalCost >=
                                       state.supplier!.minBillPrice
                                   ? 1
                                   : totalCost / state.supplier!.minBillPrice;
                               return Column(
                                 children: <Widget>[
-                                  const Divider(
-                                    color: kPrimaryColorred,
-                                    thickness: 1,
-                                  ),
+                                  // const Divider(
+                                  //   color: kPrimaryColorred,
+                                  //   thickness: 1,
+                                  // ),
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        ' عروض اليوم',
-                                        style: Styles.textStyle20(context)
-                                            .copyWith(
-                                                fontWeight: FontWeight.bold),
+                                      child: Container(
+                                        color: Colors.yellow,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(4),
+                                          child: Text(
+                                            'عروض اليوم😊',
+                                            style: Styles.textStyle20(context)
+                                                .copyWith(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -233,16 +264,24 @@ class ProductsListState extends State<ProductsList> {
                                       height:
                                           MediaQuery.of(context).size.width <
                                                   600
-                                              ? 320
-                                              : 350,
+                                              ? 323
+                                              : 353,
                                       child: ListView.builder(
                                         scrollDirection: Axis.horizontal,
                                         itemCount: state.products.length,
                                         itemBuilder:
                                             (BuildContext context, int bindex) {
-                                          final isAddedToCart =
-                                              isAddedToCartMap1[bindex] ??
+                                          final isAddedToCart2 =
+                                              _cart.isAddedToCartMap[bindex] ??
                                                   false;
+
+                                          final productQuantity = _cart
+                                                      .productQuantities[
+                                                  state.products[bindex].id] ??
+                                              state.products[bindex].quantity;
+                                          // final isAddedToCart =
+                                          //     isAddedToCartMap1[bindex] ??
+                                          //         false;
                                           final product =
                                               state.products[bindex];
 
@@ -251,31 +290,37 @@ class ProductsListState extends State<ProductsList> {
                                               color: Colors.white,
                                               child: Column(
                                                 children: <Widget>[
-                                                  // SizedBox(
-                                                  //     height: MediaQuery.of(context)
-                                                  //                 .size
-                                                  //                 .width <
-                                                  //             600
-                                                  //         ? 110
-                                                  //         : 150,
-                                                  //     width: MediaQuery.of(context)
-                                                  //                 .size
-                                                  //                 .width <
-                                                  //             600
-                                                  //         ? 90
-                                                  //         : 85,
-                                                  //     child: state
-                                                  //                 .products[
-                                                  //                     bindex]
-                                                  //                 .images
-                                                  //                 ?.first !=
-                                                  //             null
-                                                  //         ? Image.network(state
-                                                  //             .products[bindex]
-                                                  //             .images!
-                                                  //             .first!)
-                                                  //         : const Icon(
-                                                  //             Icons.image_not_supported_outlined)),
+                                                  LayoutBuilder(builder:
+                                                      (context, constraints) {
+                                                    double screenHeight =
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .height;
+                                                    double screenWidth =
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width;
+
+                                                    // تحديد الأبعاد بناءً على نسبة من حجم الشاشة
+                                                    double imageHeight =
+                                                        screenHeight *
+                                                            0.2; // 20% من ارتفاع الشاشة
+                                                    double imageWidth =
+                                                        screenWidth *
+                                                            0.3; // 30%
+                                                    return SizedBox(
+                                                        height: imageHeight,
+                                                        width: imageWidth,
+                                                        child: Image.network(
+                                                          state.products[bindex]
+                                                              .images!.first!,
+                                                          errorBuilder: (context,
+                                                                  error,
+                                                                  stackTrace) =>
+                                                              const Icon(Icons
+                                                                  .image_not_supported_outlined),
+                                                        ));
+                                                  }),
                                                   Text(
                                                     '${product.name}',
                                                     style: Styles.textStyle24(
@@ -349,7 +394,7 @@ class ProductsListState extends State<ProductsList> {
                                                         Curves.easeIn,
                                                     switchOutCurve:
                                                         Curves.easeOut,
-                                                    child: isAddedToCart
+                                                    child: isAddedToCart2
                                                         ? Row(
                                                             mainAxisSize:
                                                                 MainAxisSize
@@ -357,25 +402,42 @@ class ProductsListState extends State<ProductsList> {
                                                             children: [
                                                               QuantitySelector(
                                                                 key: ValueKey(
-                                                                    'selectr_$bindex'),
-                                                                initialValue: state
-                                                                    .products[
-                                                                        bindex]
-                                                                    .quantity,
+                                                                    'selectr_${product.productId}'),
+
+                                                                initialValue: _cart.productQuantities[state
+                                                                        .products[
+                                                                            bindex]
+                                                                        .productId] ??
+                                                                    productQuantity,
+                                                                // state
+                                                                //     .products[
+                                                                //         bindex]
+                                                                //     .quantity,
                                                                 maxSillingQuantity: state
                                                                     .products[
                                                                         bindex]
                                                                     .maxSellingQuantity,
                                                                 onChanged:
-                                                                    (newQuantity) {
+                                                                    (productQuantity) {
                                                                   setState(() {
+                                                                    // isAddedToCartList1[
+                                                                    //         bindex] =
+                                                                    //     false;
                                                                     state
                                                                         .products[
                                                                             bindex]
-                                                                        .quantity = newQuantity;
-                                                                    totalCost =
-                                                                        Cart()
-                                                                            .calculateTotalAndQuantity();
+                                                                        .quantity = productQuantity;
+
+                                                                    totalCost = calculateTotalForAddedProducts(
+                                                                        state
+                                                                            .products,
+                                                                        isAddedToCartList1);
+                                                                    // _cart
+                                                                    //     .calculateTotalAndQuantity();
+                                                                    _cart.updateProductQuantity(
+                                                                        product
+                                                                            .productId,
+                                                                        productQuantity);
                                                                   });
                                                                 },
                                                                 maxOfferQuantity: state
@@ -389,15 +451,19 @@ class ProductsListState extends State<ProductsList> {
                                                                     isAddedToCartList1[
                                                                             bindex] =
                                                                         false;
-                                                                    isAddedToCartMap1[
+                                                                    _cart.isAddedToCartMap[
                                                                             bindex] =
                                                                         false;
-                                                                    Cart().removeProduct(
+                                                                    _cart.removeProduct(
                                                                         state.products[
                                                                             bindex]);
-                                                                    totalCost =
-                                                                        Cart()
-                                                                            .calculateTotalAndQuantity();
+                                                                    totalCost = calculateTotalForAddedProducts(
+                                                                        state
+                                                                            .products,
+                                                                        isAddedToCartList1);
+
+                                                                    // _cart
+                                                                    //     .calculateTotalAndQuantity();
                                                                   });
                                                                 },
                                                                 child: Padding(
@@ -422,7 +488,7 @@ class ProductsListState extends State<ProductsList> {
                                                           )
                                                         : ElevatedButton(
                                                             key: ValueKey(
-                                                                'buttn_$bindex'),
+                                                                'buttn_${product.productId}'),
                                                             onPressed: () {
                                                               if (state
                                                                       .supplier !=
@@ -431,15 +497,15 @@ class ProductsListState extends State<ProductsList> {
                                                                   isAddedToCartList1[
                                                                           bindex] =
                                                                       true;
-                                                                  isAddedToCartMap1[
+                                                                  _cart.isAddedToCartMap[
                                                                           bindex] =
                                                                       true;
-                                                                  Cart().addProduct(
+                                                                  _cart.addProduct(
                                                                       product,
                                                                       state
                                                                           .supplier!
                                                                           .firstName);
-                                                                  Cart()
+                                                                  _cart
                                                                       .addSupplierInfo(
                                                                     state
                                                                         .supplier!
@@ -451,8 +517,12 @@ class ProductsListState extends State<ProductsList> {
                                                                         .supplier!
                                                                         .minSellingQuantity,
                                                                   );
-                                                                  totalCost = Cart()
-                                                                      .calculateTotalAndQuantity();
+                                                                  totalCost = calculateTotalForAddedProducts(
+                                                                      state
+                                                                          .products,
+                                                                      isAddedToCartList1);
+                                                                  // _cart
+                                                                  //     .calculateTotalAndQuantity();
                                                                   widget.onProductSelected(
                                                                       product);
                                                                 });
@@ -495,15 +565,17 @@ class ProductsListState extends State<ProductsList> {
                                       ),
                                     ),
                                   ),
-                                  const Divider(
-                                    color: kPrimaryColorred,
-                                    thickness: 1,
-                                  ),
+                                  // const Divider(
+                                  //   color: kPrimaryColorred,
+                                  //   thickness: 1,
+                                  // ),
                                 ],
                               );
                             }
 
-                            return buildLoadingIndicator();
+                            return Container(
+                              height: 0,
+                            );
                           },
                         ),
                       ),
@@ -512,9 +584,13 @@ class ProductsListState extends State<ProductsList> {
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: state.products.length,
                         itemBuilder: (context, index) {
-                          final isAddedToCart =
-                              isAddedToCartMap2[index] ?? false;
+                          isAddedToCart = isAddedToCartListH[index];
+                          // final isAddedToCart =
+                          //     isAddedToCartMap2[index] ?? false;
                           final product = state.products[index];
+                          final productQuantityH = _cart.productQuantitiesH[
+                                  state.products[index].id] ??
+                              state.products[index].quantity;
                           var image = product.images!.first;
                           return Card(
                             child: Container(
@@ -523,16 +599,28 @@ class ProductsListState extends State<ProductsList> {
                                 padding: EdgeInsets.all(paddingAllSides),
                                 child: Row(
                                   children: [
-                                    // SizedBox(
-                                    //   height: 150,
-                                    //   width: 130,
-                                    //   child: image != null
-                                    //       ? Image.network(
-                                    //           product.images!.first!,
-                                    //         )
-                                    //       : const Icon(Icons
-                                    //           .image_not_supported_outlined),
-                                    // ),
+                                    LayoutBuilder(
+                                        builder: (context, constraints) {
+                                      double screenHeight =
+                                          MediaQuery.of(context).size.height;
+                                      double screenWidth =
+                                          MediaQuery.of(context).size.width;
+                                      double imageHeight = screenHeight *
+                                          0.2; // 20% من ارتفاع الشاشة
+                                      double imageWidth =
+                                          screenWidth * 0.18; // 30% من
+
+                                      return SizedBox(
+                                          height: imageHeight,
+                                          width: imageWidth,
+                                          child: Image.network(
+                                            product.images!.first!,
+                                            errorBuilder: (context, error,
+                                                    stackTrace) =>
+                                                const Icon(Icons
+                                                    .image_not_supported_outlined),
+                                          ));
+                                    }),
                                     SizedBox(
                                         width: getResponsiveSizedBoxWidth(10)),
                                     Expanded(
@@ -562,7 +650,7 @@ class ProductsListState extends State<ProductsList> {
                                                 children: [
                                                   Flexible(
                                                     child: Text(
-                                                      "ج${product.price}",
+                                                      "${product.price}ج",
                                                       style: TextStyle(
                                                         fontSize:
                                                             getResponsiveFontSize(
@@ -625,25 +713,37 @@ class ProductsListState extends State<ProductsList> {
                                                           child:
                                                               QuantitySelector(
                                                             key: ValueKey(
-                                                                'selector_$index'),
-                                                            initialValue: state
-                                                                .products[index]
-                                                                .quantity,
+                                                                'selector_${product.productId}'),
+                                                            initialValue: _cart
+                                                                        .productQuantitiesH[
+                                                                    state
+                                                                        .products[
+                                                                            index]
+                                                                        .productId] ??
+                                                                productQuantityH,
                                                             maxSillingQuantity:
                                                                 state
                                                                     .products[
                                                                         index]
                                                                     .maxSellingQuantity,
                                                             onChanged:
-                                                                (newQuantity) {
+                                                                (productQuantityH) {
                                                               setState(() {
+                                                                _cart.updateProductQuantity(
+                                                                    product
+                                                                        .productId,
+                                                                    productQuantityH);
                                                                 state
                                                                         .products[
                                                                             index]
                                                                         .quantity =
-                                                                    newQuantity;
-                                                                totalCost = Cart()
-                                                                    .calculateTotalAndQuantity();
+                                                                    productQuantityH;
+                                                                totalCost = calculateTotalForAddedProductsH(
+                                                                    state
+                                                                        .products,
+                                                                    isAddedToCartListH);
+                                                                // _cart
+                                                                //     .calculateTotalAndQuantity();
                                                               });
                                                             },
                                                             maxOfferQuantity: state
@@ -654,15 +754,19 @@ class ProductsListState extends State<ProductsList> {
                                                         InkWell(
                                                           onTap: () {
                                                             setState(() {
-                                                              isAddedToCartList2[
+                                                              isAddedToCartListH[
                                                                       index] =
                                                                   false;
-                                                              Cart()
+                                                              _cart
                                                                   .removeProduct(
                                                                       product);
-                                                              totalCost = Cart()
-                                                                  .calculateTotalAndQuantity();
-                                                              isAddedToCartMap2[
+                                                              totalCost = calculateTotalForAddedProductsH(
+                                                                  state
+                                                                      .products,
+                                                                  isAddedToCartListH);
+                                                              //  _cart
+                                                              //     .calculateTotalAndQuantity();
+                                                              _cart.isAddedToCartMapH[
                                                                       index] =
                                                                   false;
                                                             });
@@ -688,18 +792,18 @@ class ProductsListState extends State<ProductsList> {
                                                     )
                                                   : ElevatedButton(
                                                       key: ValueKey(
-                                                          'button_$index'),
+                                                          'button_${product.productId}'),
                                                       onPressed: () {
                                                         if (state.supplier !=
                                                             null) {
                                                           setState(() {
-                                                            isAddedToCartList2[
+                                                            isAddedToCartListH[
                                                                 index] = true;
-                                                            Cart().addProduct(
+                                                            _cart.addProduct(
                                                                 product,
                                                                 state.supplier!
                                                                     .firstName);
-                                                            Cart()
+                                                            _cart
                                                                 .addSupplierInfo(
                                                               state.supplier!
                                                                   .firstName,
@@ -708,12 +812,17 @@ class ProductsListState extends State<ProductsList> {
                                                               state.supplier!
                                                                   .minSellingQuantity,
                                                             );
-                                                            totalCost = Cart()
-                                                                .calculateTotalAndQuantity();
+                                                            totalCost =
+                                                                calculateTotalForAddedProductsH(
+                                                                    state
+                                                                        .products,
+                                                                    isAddedToCartListH);
+                                                            //  _cart
+                                                            //     .calculateTotalAndQuantity();
                                                             widget
                                                                 .onProductSelected(
                                                                     product);
-                                                            isAddedToCartMap2[
+                                                            _cart.isAddedToCartMapH[
                                                                 index] = true;
                                                           });
                                                         }
@@ -821,8 +930,8 @@ class ProductsListState extends State<ProductsList> {
                                   'يجب عليك استكمال الحد الأدنى للشراء للمتابعة. يرجى إضافة المزيد من المنتجات.',
                             );
                           } else {
-                            resetAllButtons();
-                            resetAllListButtons();
+                            // resetAllButtons();
+                            // resetAllListButtons();
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -855,31 +964,82 @@ class ProductsListState extends State<ProductsList> {
         } else if (state is ProductsError) {
           builError(state.errorMessage);
         }
-        return Center(
-            child: SvgPicture.asset('assets/images/No data-pana (2).svg'));
+        return Container(
+          height: 0,
+        );
       },
     );
   }
 
-  void resetAllButtons() {
-    setState(() {
-      for (int i = 0; i < isAddedToCartList1.length; i++) {
-        isAddedToCartList1[i] = false;
-        isAddedToCartMap1[i] = false;
+  double calculateTotalForAddedProductsH(
+      List<Product> products, List<bool> isAddedToCartListH) {
+    double total = 0.0;
+
+    for (int i = 0; i < products.length; i++) {
+      if (isAddedToCartListH[i]) {
+        final item = products[i];
+        if (item.hasOffer) {
+          int offerQuantity = item.maxOfferQuantity;
+          int restQuantity = item.quantity - offerQuantity;
+          if (restQuantity > 0) {
+            total +=
+                (offerQuantity * item.offerPrice) + (restQuantity * item.price);
+          } else {
+            total += (item.quantity * item.offerPrice);
+          }
+        } else {
+          total += (item.quantity * item.price);
+        }
       }
-      totalCost = Cart().calculateTotalAndQuantity();
-      progressValue = 0;
-    });
+    }
+
+    return total;
   }
 
-  void resetAllListButtons() {
-    setState(() {
-      for (int i = 0; i < isAddedToCartList2.length; i++) {
-        isAddedToCartList2[i] = false;
-        isAddedToCartMap2[i] = false;
+  double calculateTotalForAddedProducts(
+      List<Product> products, List<bool> isAddedToCartList) {
+    double total = 0.0;
+
+    for (int i = 0; i < products.length; i++) {
+      if (isAddedToCartList[i]) {
+        final item = products[i];
+        if (item.hasOffer) {
+          int offerQuantity = item.maxOfferQuantity;
+          int restQuantity = item.quantity - offerQuantity;
+          if (restQuantity > 0) {
+            total +=
+                (offerQuantity * item.offerPrice) + (restQuantity * item.price);
+          } else {
+            total += (item.quantity * item.offerPrice);
+          }
+        } else {
+          total += (item.quantity * item.price);
+        }
       }
-      totalCost = Cart().calculateTotalAndQuantity();
-      progressValue = 0;
-    });
+    }
+
+    return total;
   }
+
+  // void resetAllButtons() {
+  //   setState(() {
+  //     for (int i = 0; i < isAddedToCartList1.length; i++) {
+  //       isAddedToCartList1[i] = false;
+  //       isAddedToCartMap1[i] = false;
+  //     }
+  //     totalCost = _cart.calculateTotalAndQuantity();
+  //     progressValue = 0;
+  //   });
+  // }
+
+  // void resetAllListButtons() {
+  //   setState(() {
+  //     for (int i = 0; i < isAddedToCartList2.length; i++) {
+  //       isAddedToCartList2[i] = false;
+  //       isAddedToCartMap2[i] = false;
+  //     }
+  //     totalCost = _cart.calculateTotalAndQuantity();
+  //     progressValue = 0;
+  //   });
+  // }
 }

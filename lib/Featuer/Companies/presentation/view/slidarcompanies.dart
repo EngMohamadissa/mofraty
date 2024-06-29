@@ -68,56 +68,59 @@ class MySliderPagemoveState extends State<MySliderCompanyPagemove> {
           } else if (state is OffersSliderCompanyLoaded &&
               state.offers.isNotEmpty) {
             _offerLength = state.offers.length;
-            return PageView.builder(
-              controller: _pageController,
-              itemCount: _offerLength,
-              itemBuilder: (context, index) {
-                return AnimatedBuilder(
-                  animation: _pageController,
-                  builder: (context, child) {
-                    double value = 1.0;
-                    if (_pageController.position.haveDimensions) {
-                      value = _pageController.page! - index;
-                      value = (1 - (value.abs() * .5)).clamp(0.0, 1.0);
-                    }
-                    return Center(
-                      child: SizedBox(
-                        height: Curves.easeOut.transform(value) *
-                            MediaQuery.of(context).size.height,
-                        width: Curves.easeOut.transform(value) *
-                            MediaQuery.of(context).size.width,
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: Stack(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          image: DecorationImage(
-                            // image: AssetImage(_offerImages[index]),
-                            image: NetworkImage(
-                                'https://backend.almowafraty.com/storage/${state.offers[index].image}'), // استخدام العنصر المناسب
-                            fit: BoxFit.fill,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black45,
-                              blurRadius: 20,
-                              offset: Offset(0, 12),
-                            ),
-                          ],
+            return AspectRatio(
+              aspectRatio: 9 / 4,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: _offerLength,
+                itemBuilder: (context, index) {
+                  return AnimatedBuilder(
+                    animation: _pageController,
+                    builder: (context, child) {
+                      double value = 1.0;
+                      if (_pageController.position.haveDimensions) {
+                        value = _pageController.page! - index;
+                        value = (1 - (value.abs() * .5)).clamp(0.0, 1.0);
+                      }
+                      return Center(
+                        child: SizedBox(
+                          height: Curves.easeOut.transform(value) *
+                              MediaQuery.of(context).size.height,
+                          width: Curves.easeOut.transform(value) *
+                              MediaQuery.of(context).size.width,
+                          child: child,
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            image: DecorationImage(
+                              // image: AssetImage(_offerImages[index]),
+                              image: NetworkImage(
+                                  'https://backend.almowafraty.com/storage/${state.offers[index].image}'), // استخدام العنصر المناسب
+                              fit: BoxFit.fill,
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black45,
+                                blurRadius: 20,
+                                offset: Offset(0, 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             );
           }
-          return const SizedBox(height: 8, width: 8);
+          return const SizedBox(height: 0);
         },
       ),
     );

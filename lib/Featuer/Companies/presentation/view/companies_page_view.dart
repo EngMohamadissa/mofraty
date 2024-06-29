@@ -1,11 +1,13 @@
 import 'package:eghyptproject/Featuer/Auth/cubit/user_cubit_cubit.dart';
 import 'package:eghyptproject/Featuer/Companies/presentation/manger/company_cubit.dart';
 import 'package:eghyptproject/Featuer/Companies/presentation/view/slidarcompanies.dart';
+import 'package:eghyptproject/Featuer/home/presentation/view/home_view.dart';
 import 'package:eghyptproject/Featuer/product_page_supllier/presentation/view/product_list.dart';
 import 'package:eghyptproject/Featuer/product_page_supllier/presentation/view/search_view.dart';
 import 'package:eghyptproject/constant.dart';
 import 'package:eghyptproject/core/utils/funcations/show_snack_bar.dart';
 import 'package:eghyptproject/core/widget/custom_loading.dart';
+import 'package:eghyptproject/logout_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -29,301 +31,310 @@ class _CompaniesPageState extends State<CompaniesPage> {
   String message = '';
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      endDrawer: drawerMethod(),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        GoRouter.of(context).push(AppRouter.kHomeView);
+      },
+      child: Scaffold(
+        endDrawer: drawerMethod(),
 
-      backgroundColor: const Color.fromARGB(136, 224, 214, 214),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xffE32020),
-        title: Text(widget.type,
-            style:
-                Styles.textStyle24(context).copyWith(color: kPrimaryColorwhit)),
-        actions: [
-          // IconButton(
-          //   color: Colors.white,
-          //   onPressed: () {
-          //     showSearch(
-          //       context: context,
-          //       delegate: ProductSearchDelegate22(),
-          //     );
-          //   },
-          //   icon: const Icon(Icons.search),
-          // ),
-          Directionality(
-            textDirection: TextDirection.ltr,
-            child: Builder(
-              builder: (BuildContext context) {
-                return IconButton(
-                  color: Colors.white,
-                  icon: const Icon(
-                    Icons.menu,
-                  ),
-                  onPressed: () {
-                    Scaffold.of(context).openEndDrawer();
-                  },
-                );
-              },
+        backgroundColor: const Color.fromARGB(136, 224, 214, 214),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: const Color(0xffE32020),
+          title: Text(widget.type,
+              style: Styles.textStyle24(context)
+                  .copyWith(color: kPrimaryColorwhit)),
+          actions: [
+            // IconButton(
+            //   color: Colors.white,
+            //   onPressed: () {
+            //     showSearch(
+            //       context: context,
+            //       delegate: ProductSearchDelegate22(),
+            //     );
+            //   },
+            //   icon: const Icon(Icons.search),
+            // ),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: Builder(
+                builder: (BuildContext context) {
+                  return IconButton(
+                    color: Colors.white,
+                    icon: const Icon(
+                      Icons.menu,
+                    ),
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                  );
+                },
+              ),
             ),
+          ],
+          leading: IconButton(
+            onPressed: () {
+              // Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HomeView()),
+              );
+              //  GoRouter.of(context).pop(AppRouter.kHomeView);
+            },
+            icon: const Icon(Icons.arrow_back),
+            color: Colors.white,
           ),
-        ],
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //       builder: (context) => HomePagemasa(
-            //             type: widget.type,
-            //           )),
-            // );
-            //  GoRouter.of(context).pop(AppRouter.kHomeView);
-          },
-          icon: const Icon(Icons.arrow_back),
-          color: Colors.white,
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
 
-      body: BlocProvider(
-        create: (context) {
-          final cubit = DataCubitCompany(
-              DataRepository(widget.type)); // مؤقتًا، سنترك الـ token فارغًا
-          _loadTokenAndInit(cubit);
-          return cubit;
-        },
-        child: BlocBuilder<DataCubitCompany, DataState>(
-          builder: (context, state) {
-            if (state is DataLoaded) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 0, right: 0),
-                child: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    double crossAxisSpacing = 1;
-                    double mainAxisSpacing = 2;
-                    int crossAxisCount = (constraints.maxWidth / 200).floor();
-                    return Column(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            showSearch(
-                              context: context,
-                              delegate: ProductSearchDelegate22(),
-                            );
-                          },
-                          child: Container(
-                            width: double.infinity,
-                            color: kPrimaryColorred,
+        body: BlocProvider(
+          create: (context) {
+            final cubit = DataCubitCompany(
+                DataRepository(widget.type)); // مؤقتًا، سنترك الـ token فارغًا
+            _loadTokenAndInit(cubit);
+            return cubit;
+          },
+          child: BlocBuilder<DataCubitCompany, DataState>(
+            builder: (context, state) {
+              if (state is DataLoaded) {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 0, right: 0),
+                  child: LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      double crossAxisSpacing = 1;
+                      double mainAxisSpacing = 2;
+                      int crossAxisCount = (constraints.maxWidth / 200).floor();
+                      return Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              showSearch(
+                                context: context,
+                                delegate: ProductSearchDelegate22(),
+                              );
+                            },
                             child: Container(
-                              height: 54,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(
-                                  color: Colors.red,
-                                  width: 2, // عرض الإطار الأحمر
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                    12), // زوايا مستديرة أكثر
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 2,
-                                    blurRadius: 5,
-                                    offset: const Offset(
-                                        0, 3), // يضيف الظل أسفل الـContainer
+                              width: double.infinity,
+                              color: kPrimaryColorred,
+                              child: Container(
+                                height: 54,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: Colors.red,
+                                    width: 2, // عرض الإطار الأحمر
                                   ),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal:
-                                        16.0), // إضافة بعض المساحة حول المحتوى
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceBetween, // ترتيب العناصر بأقصى الجوانب
-                                  children: [
-                                    const Icon(
-                                      Icons.search,
-                                      size: 35,
-                                      color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(
+                                      12), // زوايا مستديرة أكثر
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: const Offset(
+                                          0, 3), // يضيف الظل أسفل الـContainer
                                     ),
-                                    Text(
-                                      'قارن أسعارك من هنا',
-                                      textAlign: TextAlign.start,
-                                      style:
-                                          Styles.textStyle20(context).copyWith(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight
-                                            .bold, // جعل النص عريضًا لتحسين ظهوره
-                                      ),
-                                    ),
-                                    const Spacer(),
                                   ],
                                 ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal:
+                                          16.0), // إضافة بعض المساحة حول المحتوى
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceBetween, // ترتيب العناصر بأقصى الجوانب
+                                    children: [
+                                      const Icon(
+                                        Icons.search,
+                                        size: 35,
+                                        color: Colors.grey,
+                                      ),
+                                      Text(
+                                        'قارن أسعارك من هنا',
+                                        textAlign: TextAlign.start,
+                                        style: Styles.textStyle20(context)
+                                            .copyWith(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight
+                                              .bold, // جعل النص عريضًا لتحسين ظهوره
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        AspectRatio(
-                          aspectRatio: 9 / 4,
-                          child: MySliderCompanyPagemove(
+                          MySliderCompanyPagemove(
                             type: widget.type,
                           ),
-                        ),
-                        Expanded(
-                          child: GridView.builder(
-                            scrollDirection: Axis.vertical,
-                            itemCount: state.suppliers.length,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: crossAxisCount,
-                              mainAxisSpacing: mainAxisSpacing,
-                              crossAxisSpacing: crossAxisSpacing,
-                              mainAxisExtent:
-                                  300, // زيادة ارتفاع العنصر لضمان ملائمة المحتوى
-                            ),
-                            itemBuilder: (context, index) {
-                              var supplier = state.suppliers[index];
+                          Expanded(
+                            child: GridView.builder(
+                              scrollDirection: Axis.vertical,
+                              itemCount: state.suppliers.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                mainAxisSpacing: mainAxisSpacing,
+                                crossAxisSpacing: crossAxisSpacing,
+                                mainAxisExtent:
+                                    300, // زيادة ارتفاع العنصر لضمان ملائمة المحتوى
+                              ),
+                              itemBuilder: (context, index) {
+                                var supplier = state.suppliers[index];
 
-                              return InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CategoriesPageFS(
-                                        id: supplier.id,
-                                        supplier: supplier,
-                                        type: widget.type,
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CategoriesPageFS(
+                                          id: supplier.id,
+                                          supplier: supplier,
+                                          type: widget.type,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                                child: SizedBox(
-                                  width: 150,
-                                  height: 400,
-                                  child: Card(
-                                    borderOnForeground: true,
-                                    color: Colors.white,
-                                    elevation: 1,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 5),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                CircleAvatar(
-                                                  backgroundColor:
-                                                      const Color.fromARGB(
-                                                          255, 132, 80, 2),
-                                                  radius: 35,
-                                                  backgroundImage: NetworkImage(
-                                                      supplier.image,
-                                                      scale: 1.0),
-                                                  onBackgroundImageError:
-                                                      (exception,
-                                                          stackTrace) {},
-                                                ),
-                                              ],
+                                    );
+                                  },
+                                  child: SizedBox(
+                                    width: 150,
+                                    height: 400,
+                                    child: Card(
+                                      borderOnForeground: true,
+                                      color: Colors.white,
+                                      elevation: 1,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 5),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.only(top: 0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  CircleAvatar(
+                                                    backgroundColor:
+                                                        const Color.fromARGB(
+                                                            255, 132, 80, 2),
+                                                    radius: 35,
+                                                    backgroundImage:
+                                                        NetworkImage(
+                                                            supplier.image,
+                                                            scale: 1.0),
+                                                    onBackgroundImageError:
+                                                        (exception,
+                                                            stackTrace) {},
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Center(
-                                              child: FittedBox(
-                                                fit: BoxFit.contain,
-                                                child: Text(
-                                                  supplier.storeName,
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.w800,
+                                            Expanded(
+                                              child: Center(
+                                                child: FittedBox(
+                                                  fit: BoxFit.contain,
+                                                  child: Text(
+                                                    supplier.storeName,
+                                                    style: const TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 3),
-                                              child: Text(
-                                                supplier.location,
-                                                style:
-                                                    Styles.textStyle18(context),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 3),
+                                                child: Text(
+                                                  supplier.location,
+                                                  style: Styles.textStyle18(
+                                                      context),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 3),
-                                              child: Text(
-                                                '${supplier.deliveryDuration}',
-                                                style:
-                                                    Styles.textStyle18(context),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 3),
+                                                child: Text(
+                                                  '${supplier.deliveryDuration}',
+                                                  style: Styles.textStyle18(
+                                                      context),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 3),
-                                              child: Text(
-                                                'الحد الأدنى: ${supplier.minBillPrice}',
-                                                style:
-                                                    Styles.textStyle18(context),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 3),
+                                                child: Text(
+                                                  'الحد الأدنى: ${supplier.minBillPrice}',
+                                                  style: Styles.textStyle18(
+                                                      context),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 3),
-                                              child: Text(
-                                                'اقل عدد منتجات:${supplier.minSellingQuantity}',
-                                                style:
-                                                    Styles.textStyle18(context),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 3),
+                                                child: Text(
+                                                  'اقل عدد منتجات:${supplier.minSellingQuantity}',
+                                                  style: Styles.textStyle18(
+                                                      context),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              );
-            } else if (state is DataLoading) {
-              return buildLoadingIndicator();
-            } else if (state is DataError) {
-              return builError(state.message);
-            }
-            return Center(
-                child: SvgPicture.asset('assets/images/No data-pana (2).svg'));
-          },
+                        ],
+                      );
+                    },
+                  ),
+                );
+              } else if (state is DataLoading) {
+                return buildLoadingIndicator();
+              } else if (state is DataError) {
+                return builError(state.message);
+              }
+              return Center(
+                  child:
+                      SvgPicture.asset('assets/images/No data-pana (2).svg'));
+            },
+          ),
         ),
+        // floatingActionButton: CircleAvatar(child: FlutterLogo(),),
       ),
-      // floatingActionButton: CircleAvatar(child: FlutterLogo(),),
     );
   }
 
@@ -364,13 +375,13 @@ class _CompaniesPageState extends State<CompaniesPage> {
               //   title: const Text(' اتصل بنا'),
               //   onTap: () {},
               // ),
-              ListTile(
-                leading: const Icon(Icons.add, color: Color(0xffE32020)),
-                title: const Text('اشترك'),
-                onTap: () {
-                  GoRouter.of(context).push(AppRouter.kSubscriebView);
-                },
-              ),
+              // ListTile(
+              //   leading: const Icon(Icons.add, color: Color(0xffE32020)),
+              //   title: const Text('اشترك'),
+              //   onTap: () {
+              //     GoRouter.of(context).push(AppRouter.kSubscriebView);
+              //   },
+              // ),
               ListTile(
                 leading: const Icon(
                   Icons.exit_to_app,
@@ -384,6 +395,7 @@ class _CompaniesPageState extends State<CompaniesPage> {
                     } else if (state is LogoutSuccess) {
                       showCustomSnackBar(context, state.message,
                           color: Colors.green);
+                      GoRouter.of(context).push(AppRouter.kloginView);
                     }
                   },
                   builder: (context, state) {

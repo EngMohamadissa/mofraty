@@ -84,16 +84,16 @@ class CategoriesPageFSState extends State<CategoriesPageFS> {
                 child: Scaffold(
                   appBar: AppBar(
                     // automaticallyImplyLeading: false,
-                    actions: [
-                      IconButton(
-                        onPressed: () {
-                          ProductSearchDelegate22();
-                        },
-                        icon: const Icon(
-                          Icons.search,
-                          color: Colors.white,
-                        ),
-                      ),
+                    actions: const [
+                      // IconButton(
+                      //   onPressed: () {
+                      //     ProductSearchDelegate22();
+                      //   },
+                      //   icon: const Icon(
+                      //     Icons.search,
+                      //     color: Colors.white,
+                      //   ),
+                      // ),
                     ],
                     leading: IconButton(
                       icon: const Icon(

@@ -663,7 +663,7 @@ class BillBody extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
-                            'الموفراتي وفرت لك 😊:  '
+                            'الموفراتي وفر لك 😊:  '
                             '${bill.waffarnalak}'
                             ' ج',
                             style: const TextStyle(color: Colors.black),
@@ -677,130 +677,125 @@ class BillBody extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              color: Colors.red,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-                                  const Text(
-                                    'إلغاء الطلبية',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      showCustomAlertDialog(
-                                          context: context,
-                                          title: 'ملاحظة',
-                                          content:
-                                              'هل أنت متأكد من حذف هذه الفاتورة',
-                                          actions: [
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Colors.green),
-                                              child: Text(
-                                                'إلغاء',
+                            InkWell(
+                              onTap: () {
+                                showCustomAlertDialog(
+                                    context: context,
+                                    title: 'ملاحظة',
+                                    content: 'هل أنت متأكد من حذف هذه الفاتورة',
+                                    actions: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.green),
+                                        child: Text(
+                                          'إلغاء',
+                                          style: Styles.textStyle18(context)
+                                              .copyWith(color: Colors.white),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 25),
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red),
+                                          child: BlocConsumer<BillCubitGet,
+                                              BillStateGet>(
+                                            listener: (context, state) {
+                                              if (state is BillDeletFailure) {
+                                                showCustomSnackBar(
+                                                    context, state.errorMessage,
+                                                    color: kPrimaryColorred);
+                                              } else if (state
+                                                  is BillDeletSuccess) {
+                                                playSound(
+                                                    'sounds/zapsplat_household_wire_brush_scrub_clean_dry_concrete_single_003_107476.mp3');
+
+                                                showCustomSnackBar(
+                                                    context, state.message,
+                                                    color: Colors.green);
+                                              }
+                                            },
+                                            builder: (context, state) {
+                                              return Text(
+                                                'حذف',
                                                 style:
                                                     Styles.textStyle18(context)
                                                         .copyWith(
                                                             color:
                                                                 Colors.white),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 25),
-                                              child: ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.red),
-                                                child: BlocConsumer<
-                                                    BillCubitGet, BillStateGet>(
-                                                  listener: (context, state) {
-                                                    if (state
-                                                        is BillDeletFailure) {
-                                                      showCustomSnackBar(
-                                                          context,
-                                                          state.errorMessage,
-                                                          color:
-                                                              kPrimaryColorred);
-                                                    } else if (state
-                                                        is BillDeletSuccess) {
-                                                      playSound(
-                                                          'sounds/zapsplat_household_wire_brush_scrub_clean_dry_concrete_single_003_107476.mp3');
-                                                      showCustomSnackBar(
-                                                          context,
-                                                          state.message,
-                                                          color: Colors.green);
-                                                    }
-                                                  },
-                                                  builder: (context, state) {
-                                                    return Text(
-                                                      'حذف',
-                                                      style: Styles.textStyle18(
-                                                              context)
-                                                          .copyWith(
-                                                              color:
-                                                                  Colors.white),
-                                                    );
-                                                  },
-                                                ),
-                                                onPressed: () {
-                                                  BlocProvider.of<BillCubitGet>(
-                                                          context)
-                                                      .deleteBill(billid!);
+                                              );
+                                            },
+                                          ),
+                                          onPressed: () {
+                                            BlocProvider.of<BillCubitGet>(
+                                                    context)
+                                                .deleteBill(billid!);
 
-                                                  BlocProvider.of<BillCubitGet>(
-                                                          context)
-                                                      .getBills(
-                                                          BillType.current);
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ),
-                                          ]);
-                                    },
-                                  ),
-                                ],
+                                            BlocProvider.of<BillCubitGet>(
+                                                    context)
+                                                .getBills(BillType.current);
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ),
+                                    ]);
+                              },
+                              child: Container(
+                                height: MediaQuery.of(context).size.width < 600
+                                    ? 50
+                                    : 70,
+                                color: Colors.red,
+                                child: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(
+                                      'إلغاء الطلبية',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    Icon(Icons.delete, color: Colors.white),
+                                  ],
+                                ),
                               ),
                             ),
                             const SizedBox(
-                              width: 8,
+                              width: 24,
                             ),
-                            Container(
-                              color: Colors.green,
-                              child: Row(
-                                children: [
-                                  const SizedBox(
-                                    width: 8,
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        CartEditView(bill: state.bills[index]),
                                   ),
-                                  const Text('تعديل الطلبية',
-                                      style: TextStyle(color: Colors.white)),
-                                  IconButton(
-                                    icon: const Icon(
+                                );
+                              },
+                              child: Container(
+                                height: MediaQuery.of(context).size.width < 600
+                                    ? 50
+                                    : 70,
+                                color: Colors.green,
+                                child: const Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text('تعديل الطلبية',
+                                        style: TextStyle(color: Colors.white)),
+                                    Icon(
                                       Icons.edit,
                                       color: Colors.white,
                                     ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => CartEditView(
-                                              bill: state.bills[index]),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             )
                           ],

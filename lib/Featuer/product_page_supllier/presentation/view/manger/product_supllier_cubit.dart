@@ -123,6 +123,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:eghyptproject/Featuer/Auth/cubit/user_cubit_cubit.dart';
+import 'package:eghyptproject/Featuer/home/presentation/view/widget/move_photo.dart';
 import 'package:eghyptproject/Featuer/product_page_supllier/data/product_model.dart';
 import 'package:eghyptproject/Featuer/product_page_supllier/presentation/view/manger/product_supllier_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -438,4 +439,62 @@ class ProductCubitSupllier extends Cubit<ProductStateSupllier> {
       emit(WithOfferError("An unexpected error occurred: ${e.toString()}"));
     }
   }
+
+  void getOffersSlider(int id) async {
+    // final prefs = await SharedPreferences.getInstance();
+    // final token = prefs.getString('access_token');
+
+    try {
+      emit(OffersSliderLoading());
+      // final options = Options(
+      //   headers: {
+      //     'Authorization': 'Bearer $token',
+      //   },
+      // );
+      // استخدم dio مع الـ headers لجلب البيانات من الـ API
+      final response = await apiProvider.fetchSupplierData(id);
+
+      final offers = (response['slider_offers'] as List)
+          .map((e) => Offer.fromJson(e))
+          .toList();
+
+      emit(OffersSliderLoaded(offers: offers));
+    } on DioException catch (e) {
+      String errorMessage = ErrorHandler.handleDioError(e);
+      print('fetchCategories$e');
+      emit(OffersSliderError(message: errorMessage));
+    } catch (e) {
+      emit(OffersSliderError(message: e.toString()));
+    }
+  }
 }
+
+// class OffersSliderCubit extends Cubit<ProductStateSupllier> {
+//   final ApiProvider apiProvider;
+
+//   OffersSliderCubit(this.apiProvider) : super(ProductsInitial());
+
+//   void getOffersSlider(int id) async {
+//     final prefs = await SharedPreferences.getInstance();
+//     final token = prefs.getString('access_token');
+
+//     try {
+//       emit(OffersSliderLoading());
+//       final options = Options(
+//         headers: {
+//           'Authorization': 'Bearer $token',
+//         },
+//       );
+//       // استخدم dio مع الـ headers لجلب البيانات من الـ API
+//       final response = await apiProvider.fetchSupplierData(id);
+
+//       final offers = (response['slider_offers'] as List)
+//           .map((e) => Offer.fromJson(e))
+//           .toList();
+
+//       emit(OffersSliderLoaded(offers: offers));
+//     } catch (e) {
+//       emit(OffersSliderError(message: e.toString()));
+//     }
+//   }
+// }
